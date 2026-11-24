@@ -1,5 +1,5 @@
 import type { GeographicBounds, ProjectConfig, ProjectLayerConfig } from "./types";
-import { templateProject } from "./template";
+import { microbasinColors, templateProject } from "./template";
 
 // Valores reais do projeto fazenda-copaiba. template.ts guarda só exemplos genéricos
 // usados por npm run check: não coloque dados da propriedade nele.
@@ -104,6 +104,19 @@ const carLayers: ProjectLayerConfig[] = [
 
 // Ordem de desenho dos GeoJSONs: CAR, curvas, drenagem e perímetro.
 const vectors: ProjectLayerConfig[] = [
+  {
+    id: "microbacias", name: "Microbacias Hidrográficas", description: "Unidades de contribuição",
+    kind: "vector", defaultVisible: false, panelOrder: 3.5, opacityControl: true,
+    source: {
+      format: "geojson", url: `${r2}/geojson/microbacias.geojson`, autoZoom: false,
+      style: {
+        stroke: "#FFFFFF", strokeWidth: 1.5, fill: "#B6C3CF", fillOpacity: 0.35, clampToGround: true, zIndex: 3,
+        classification: { property: "cor", classes: Object.fromEntries(microbasinColors.map((color, index) => [String(index), { fill: color, stroke: color }])) },
+        outline: { property: "cor", colors: microbasinColors, width: 1.5 },
+      },
+      popup: { title: "Microbacia hidrográfica", fields: [] },
+    },
+  },
   {
     id: "curvas-3m", name: "Curvas de Nível — 3 m", description: "Curvas com equidistância de 3 m",
     kind: "contours", defaultVisible: false, panelOrder: 2,
